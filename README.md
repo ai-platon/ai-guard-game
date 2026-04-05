@@ -6,6 +6,9 @@
 ![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla-yellow?logo=javascript&logoColor=black)
 ![Groq](https://img.shields.io/badge/Groq-Llama--3--70b-orange)
 ![License](https://img.shields.io/badge/license-MIT-green)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-ai--platon.github.io-00d4ff?logo=github&logoColor=white)](https://ai-platon.github.io/ai-guard-game/)
+
+> 🎮 **[Play it live → ai-platon.github.io/ai-guard-game](https://ai-platon.github.io/ai-guard-game/)** — no installation needed
 
 ---
 
@@ -45,11 +48,11 @@
 ### 1. Download the file
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/ai-guard-game.git
+git clone https://github.com/ai-platon/ai-guard-game.git
 cd ai-guard-game
 ```
 
-Or just download `ai_guard_game.html` directly.
+Or just download `index.html` directly.
 
 ### 2. Get a free Groq API key
 
@@ -58,7 +61,7 @@ Go to [console.groq.com/keys](https://console.groq.com/keys) and create a key.
 
 ### 3. Open the game
 
-Simply open `ai_guard_game.html` in any modern browser — no server, no install needed.
+Simply open `index.html` in any modern browser — no server, no install needed.
 
 ---
 
@@ -113,7 +116,7 @@ Top 10 results are saved locally in your browser's `localStorage`.
 
 ```
 ai-guard-game/
-└── ai_guard_game.html    # The entire game — self-contained, single file
+└── index.html    # The entire game — self-contained, single file
 ```
 
 No dependencies. No build step. No server. Just open and play.
