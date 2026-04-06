@@ -302,11 +302,31 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
 .end-modal-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,255,.25),transparent);margin:16px 0}
 
 /* Responsive */
+/* ── MOBILE BOTTOM SHEET ── */
 @media(max-width:700px){
-  .app{flex-direction:column}
-  .sidebar{width:100%;min-width:unset;height:auto;max-height:45vh;overflow-y:auto}
-  .main{padding:10px 14px}
+  .app{flex-direction:column;height:100dvh;overflow:hidden}
+  .main{flex:1;padding:8px 12px;overflow:hidden;display:flex;flex-direction:column;order:1;min-height:0}
+  .sidebar{order:2;width:100%;min-width:unset;height:auto;max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1);border-right:none;border-top:1px solid rgba(0,212,255,.2)}
+  .sidebar.mob-open{max-height:70vh;overflow-y:auto}
+  .sb-header{display:none}
+  .sb-footer{padding:10px 20px}
+  .guard-card{padding:8px 10px;margin-bottom:5px}
+  .guard-card .gc-desc{display:none}
+  .guard-arena{height:110px;margin-bottom:8px}
+  .game-title{font-size:14px;letter-spacing:2px}
+  .game-subtitle{display:none}
+  .game-header{padding:4px 0 8px}
+  .info-bar{gap:5px;margin-bottom:8px}
+  .info-chip{font-size:11px;padding:5px 10px}
+  .chip-hint{display:none}
+  .chat-input{font-size:14px}
+  .mob-tabbar{display:flex;background:rgba(4,10,22,.98);border-top:1px solid rgba(0,212,255,.15);z-index:100}
+  .mob-tab{flex:1;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txt3);letter-spacing:1px;cursor:pointer;border:none;background:none;outline:none;transition:color .2s}
+  .mob-tab .tab-icon{font-size:18px;line-height:1}
+  .mob-tab.active{color:var(--c)}
+  .mob-tab.active .tab-icon{filter:drop-shadow(0 0 6px var(--c))}
 }
+.mob-tabbar{display:none}
 </style>
 </head>
 <body>
@@ -433,6 +453,19 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
       </div>
     </div>
   </div>
+</div>
+
+<!-- MOBILE TAB BAR -->
+<div class="mob-tabbar" id="mobTabbar">
+  <button class="mob-tab active" id="tabGame" onclick="mobTab('game')">
+    <span class="tab-icon">⚔️</span>GAME
+  </button>
+  <button class="mob-tab" id="tabGuard" onclick="mobTab('guard')">
+    <span class="tab-icon">🛡️</span>GUARDS
+  </button>
+  <button class="mob-tab" id="tabInfo" onclick="mobTab('info')">
+    <span class="tab-icon">🏆</span>SCORE
+  </button>
 </div>
 
 <script>
@@ -1058,6 +1091,48 @@ document.addEventListener('keydown', function(e) {
   if (inp && document.activeElement === inp && e.key === 'Enter') submitApiKey();
 });
 document.getElementById('nameInput').addEventListener('keydown', e=>{ if(e.key==='Enter') confirmName(); });
+
+// ── MOBILE TABS ──
+function mobTab(tab) {
+  const sidebar = document.querySelector('.sidebar');
+  const tabs = document.querySelectorAll('.mob-tab');
+  tabs.forEach(t => t.classList.remove('active'));
+
+  if (tab === 'game') {
+    document.getElementById('tabGame').classList.add('active');
+    sidebar.classList.remove('mob-open');
+    // Show all sidebar sections
+    document.querySelectorAll('.sb-section').forEach(s => s.style.display = '');
+  } else if (tab === 'guard') {
+    document.getElementById('tabGuard').classList.add('active');
+    sidebar.classList.add('mob-open');
+    // Show guard + api key sections, hide leaderboard
+    document.querySelectorAll('.sb-section').forEach((s, i) => {
+      s.style.display = (i === 0 || i === 1 || i === 2 || i === 3) ? '' : 'none';
+    });
+  } else if (tab === 'info') {
+    document.getElementById('tabInfo').classList.add('active');
+    sidebar.classList.add('mob-open');
+    // Show only leaderboard section
+    document.querySelectorAll('.sb-section').forEach((s, i) => {
+      s.style.display = (i === 4) ? '' : 'none';
+    });
+  }
+}
+
+// Close sidebar when user starts typing on mobile
+document.addEventListener('DOMContentLoaded', () => {
+  const chatInput = document.getElementById('chatInput');
+  if (chatInput) {
+    chatInput.addEventListener('focus', () => {
+      if (window.innerWidth <= 700) {
+        document.querySelector('.sidebar').classList.remove('mob-open');
+        document.querySelectorAll('.mob-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('tabGame').classList.add('active');
+      }
+    });
+  }
+});
 
 // Init
 applyGuardColor();
