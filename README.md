@@ -18,11 +18,9 @@
   <tr>
     <td align="center">
       <img src="https://github.com/user-attachments/assets/66afa24b-2ea3-4c49-ab33-e39398df21a5" width="480"/>
-      <br><sub>Main game interface</sub>
     </td>
     <td align="center">
       <img src="https://github.com/user-attachments/assets/a5f28fd8-c329-4ef2-a189-7bcb3b013108" width="480"/>
-      <br><sub>Victory and leaderboard</sub>
     </td>
   </tr>
 </table>
