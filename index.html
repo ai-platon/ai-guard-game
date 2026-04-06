@@ -303,6 +303,8 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
 
 /* Responsive */
 .mob-tabbar{display:none}
+.sb-label-mob{display:none}
+@media(max-width:700px){.sb-label-mob{display:inline}.sb-label-desk{display:none}}
 @media(max-width:700px){
   body{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
   .app{flex-direction:column;flex:1;overflow:hidden;min-height:0}
@@ -444,7 +446,7 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
       <div class="chat-scroll" id="chatScroll"></div>
 
       <div id="noKeyMsg" class="no-key" style="display:none">
-        ◈ ENTER YOUR GROQ API KEY IN THE SIDEBAR<br>
+        ◈ ENTER YOUR GROQ API KEY IN THE <span class="sb-label-desk">SIDEBAR</span><span class="sb-label-mob">GUARDS</span><br>
         <a href="https://console.groq.com/keys" target="_blank" style="font-size:13px;color:var(--c);text-decoration:none;letter-spacing:1px;border-bottom:1px solid rgba(0,212,255,.3);padding-bottom:2px">→ console.groq.com/keys — free</a>
       </div>
 
