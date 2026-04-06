@@ -40,6 +40,23 @@
 | 🏆 **Leaderboard** | Local leaderboard saved in browser — compete with yourself and others |
 | 🎨 **Cyberpunk UI** | Animated arena, scanlines, particle effects, glowing interface |
 | 💾 **API key memory** | Your Groq key is saved in `localStorage` — no re-entry needed |
+| 📱 **Mobile ready** | Full responsive layout with native bottom tab navigation |
+
+---
+
+## 📱 Mobile
+
+The game is fully playable on any phone — no app needed, just open the link in your browser.
+
+On mobile, the interface switches to a tab-based layout:
+
+| Tab | What it does |
+|---|---|
+| ⚔️ **GAME** | Full-screen chat with the guard |
+| 🛡️ **GUARDS** | Switch guards, enter API key, start new game |
+| 🏆 **SCORE** | Full-screen leaderboard |
+
+The game auto-switches to the GAME tab when you connect your API key, start a new game, or tap the chat input.
 
 ---
 
