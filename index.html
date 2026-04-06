@@ -302,31 +302,27 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
 .end-modal-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,255,.25),transparent);margin:16px 0}
 
 /* Responsive */
-/* ── MOBILE BOTTOM SHEET ── */
+.mob-tabbar{display:none}
 @media(max-width:700px){
   .app{flex-direction:column;height:100dvh;overflow:hidden}
-  .main{flex:1;padding:8px 12px;overflow:hidden;display:flex;flex-direction:column;order:1;min-height:0}
-  .sidebar{order:2;width:100%;min-width:unset;height:auto;max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1);border-right:none;border-top:1px solid rgba(0,212,255,.2)}
-  .sidebar.mob-open{max-height:70vh;overflow-y:auto}
+  .main{order:1;flex:1;padding:6px 10px;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+  .sidebar{order:2;width:100%;min-width:unset;max-height:0;overflow:hidden;transition:max-height .3s ease;border-right:none;border-top:1px solid rgba(0,212,255,.15)}
+  .sidebar.mob-open{max-height:65vh;overflow-y:auto}
   .sb-header{display:none}
-  .sb-footer{padding:10px 20px}
-  .guard-card{padding:8px 10px;margin-bottom:5px}
-  .guard-card .gc-desc{display:none}
-  .guard-arena{height:110px;margin-bottom:8px}
-  .game-title{font-size:14px;letter-spacing:2px}
+  .guard-arena{height:90px;margin-bottom:6px}
+  .game-header{padding:2px 0 6px}
+  .game-title{font-size:13px;letter-spacing:1.5px}
   .game-subtitle{display:none}
-  .game-header{padding:4px 0 8px}
-  .info-bar{gap:5px;margin-bottom:8px}
-  .info-chip{font-size:11px;padding:5px 10px}
+  .info-bar{gap:4px;margin-bottom:6px}
+  .info-chip{font-size:10px;padding:4px 8px}
   .chip-hint{display:none}
-  .chat-input{font-size:14px}
-  .mob-tabbar{display:flex;background:rgba(4,10,22,.98);border-top:1px solid rgba(0,212,255,.15);z-index:100}
-  .mob-tab{flex:1;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txt3);letter-spacing:1px;cursor:pointer;border:none;background:none;outline:none;transition:color .2s}
-  .mob-tab .tab-icon{font-size:18px;line-height:1}
+  .moves-bar{margin-bottom:6px}
+  .mob-tabbar{display:flex;order:3;background:rgba(3,8,18,.98);border-top:1px solid rgba(0,212,255,.18);flex-shrink:0}
+  .mob-tab{flex:1;padding:8px 2px 10px;display:flex;flex-direction:column;align-items:center;gap:1px;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1.5px;color:var(--txt3);cursor:pointer;border:none;background:none;outline:none;transition:all .2s}
+  .mob-tab .ti{font-size:20px;line-height:1.2}
   .mob-tab.active{color:var(--c)}
-  .mob-tab.active .tab-icon{filter:drop-shadow(0 0 6px var(--c))}
+  .mob-tab.active .ti{filter:drop-shadow(0 0 8px var(--c))}
 }
-.mob-tabbar{display:none}
 </style>
 </head>
 <body>
@@ -458,13 +454,13 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
 <!-- MOBILE TAB BAR -->
 <div class="mob-tabbar" id="mobTabbar">
   <button class="mob-tab active" id="tabGame" onclick="mobTab('game')">
-    <span class="tab-icon">⚔️</span>GAME
+    <span class="ti">⚔️</span>GAME
   </button>
   <button class="mob-tab" id="tabGuard" onclick="mobTab('guard')">
-    <span class="tab-icon">🛡️</span>GUARDS
+    <span class="ti">🛡️</span>GUARDS
   </button>
-  <button class="mob-tab" id="tabInfo" onclick="mobTab('info')">
-    <span class="tab-icon">🏆</span>SCORE
+  <button class="mob-tab" id="tabScore" onclick="mobTab('score')">
+    <span class="ti">🏆</span>SCORE
   </button>
 </div>
 
@@ -1094,44 +1090,29 @@ document.getElementById('nameInput').addEventListener('keydown', e=>{ if(e.key==
 
 // ── MOBILE TABS ──
 function mobTab(tab) {
+  if(window.innerWidth > 700) return;
   const sidebar = document.querySelector('.sidebar');
-  const tabs = document.querySelectorAll('.mob-tab');
-  tabs.forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.mob-tab').forEach(t => t.classList.remove('active'));
+  const sections = document.querySelectorAll('.sb-section');
 
-  if (tab === 'game') {
+  if(tab === 'game') {
     document.getElementById('tabGame').classList.add('active');
     sidebar.classList.remove('mob-open');
-    // Show all sidebar sections
-    document.querySelectorAll('.sb-section').forEach(s => s.style.display = '');
-  } else if (tab === 'guard') {
+  } else if(tab === 'guard') {
     document.getElementById('tabGuard').classList.add('active');
     sidebar.classList.add('mob-open');
-    // Show guard + api key sections, hide leaderboard
-    document.querySelectorAll('.sb-section').forEach((s, i) => {
-      s.style.display = (i === 0 || i === 1 || i === 2 || i === 3) ? '' : 'none';
-    });
-  } else if (tab === 'info') {
-    document.getElementById('tabInfo').classList.add('active');
+    sections.forEach((s,i) => s.style.display = i < 4 ? '' : 'none');
+  } else if(tab === 'score') {
+    document.getElementById('tabScore').classList.add('active');
     sidebar.classList.add('mob-open');
-    // Show only leaderboard section
-    document.querySelectorAll('.sb-section').forEach((s, i) => {
-      s.style.display = (i === 4) ? '' : 'none';
-    });
+    sections.forEach((s,i) => s.style.display = i === 4 ? '' : 'none');
   }
 }
-
-// Close sidebar when user starts typing on mobile
 document.addEventListener('DOMContentLoaded', () => {
-  const chatInput = document.getElementById('chatInput');
-  if (chatInput) {
-    chatInput.addEventListener('focus', () => {
-      if (window.innerWidth <= 700) {
-        document.querySelector('.sidebar').classList.remove('mob-open');
-        document.querySelectorAll('.mob-tab').forEach(t => t.classList.remove('active'));
-        document.getElementById('tabGame').classList.add('active');
-      }
-    });
-  }
+  const inp = document.getElementById('chatInput');
+  if(inp) inp.addEventListener('focus', () => {
+    if(window.innerWidth <= 700) mobTab('game');
+  });
 });
 
 // Init
