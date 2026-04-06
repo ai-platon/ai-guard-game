@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
   --c:#00d4ff;--c2:#00ff9d;--red:#ff2244;--amber:#ffb300;
   --bg:#040d1a;--bg2:#071525;--bg3:#0a1d30;
@@ -303,7 +303,7 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
 
 /* Responsive */
 .mob-tabbar{display:none}
-.sb-label-mob{display:none}
+.sb-label-mob{display:none}.sb-label-desk{display:inline}
 @media(max-width:700px){.sb-label-mob{display:inline}.sb-label-desk{display:none}}
 @media(max-width:700px){
   body{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
