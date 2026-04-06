@@ -306,9 +306,10 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
 @media(max-width:700px){
   body{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
   .app{flex-direction:column;flex:1;overflow:hidden;min-height:0}
-  .main{order:1;flex:1;padding:6px 10px;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+  .main{order:1;flex:1;padding:6px 10px;overflow:hidden;display:flex;flex-direction:column;min-height:0;transition:flex .3s ease}
+  .main.mob-hidden{flex:0;overflow:hidden;min-height:0;padding:0}
   .sidebar{order:2;width:100%;min-width:unset;max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1);border-right:none;border-top:1px solid rgba(0,212,255,.15)}
-  .sidebar.mob-open{max-height:65vh;overflow-y:auto}
+  .sidebar.mob-open{max-height:100vh;overflow-y:auto}
   .sb-header{display:none}
   .guard-arena{height:120px;margin-bottom:6px}
   .guard-stage svg{width:56px;height:90px}
@@ -324,7 +325,7 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
   .moves-bar{margin-bottom:6px}
   .mob-tabbar{display:flex;background:rgba(3,8,18,.98);border-top:1px solid rgba(0,212,255,.18);flex-shrink:0;width:100%}
   .mob-tab{flex:1;padding:8px 2px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1.5px;color:var(--txt3);cursor:pointer;border:none;background:none;outline:none;transition:all .25s;position:relative;overflow:hidden}
-  .mob-tab::after{content:'';position:absolute;inset:0;background:rgba(0,212,255,.06);opacity:0;transition:opacity .2s;border-radius:0}
+  .mob-tab::after{content:'';position:absolute;inset:0;background:rgba(0,212,255,.06);opacity:0;transition:opacity .2s}
   .mob-tab:active::after{opacity:1}
   .mob-tab .ti{font-size:20px;line-height:1.2;transition:transform .2s}
   .mob-tab.active{color:var(--c)}
@@ -566,6 +567,7 @@ function selectGuard(id) {
   renderVuln();
   renderGuardSVG();
   newGame();
+  mobGoToGame();
 }
 
 function applyGuardColor() {
@@ -1089,27 +1091,31 @@ document.getElementById('nameInput').addEventListener('keydown', e=>{ if(e.key==
 function mobTab(tab) {
   if(window.innerWidth > 700) return;
   const sidebar = document.querySelector('.sidebar');
+  const mainEl = document.querySelector('.main');
   document.querySelectorAll('.mob-tab').forEach(t => t.classList.remove('active'));
   const sections = document.querySelectorAll('.sb-section');
+
   if(tab === 'game') {
     document.getElementById('tabGame').classList.add('active');
     sidebar.classList.remove('mob-open');
+    mainEl.classList.remove('mob-hidden');
   } else if(tab === 'guard') {
     document.getElementById('tabGuard').classList.add('active');
+    mainEl.classList.remove('mob-hidden');
     sidebar.classList.add('mob-open');
-    // show guard selector, vulnerability, api key, new game button — hide leaderboard
     sections.forEach((s,i) => s.style.display = i < 4 ? '' : 'none');
   } else if(tab === 'score') {
     document.getElementById('tabScore').classList.add('active');
+    // hide main entirely, show sidebar full height with only leaderboard
+    mainEl.classList.add('mob-hidden');
     sidebar.classList.add('mob-open');
-    // show only leaderboard
     sections.forEach((s,i) => s.style.display = i === 4 ? '' : 'none');
   }
 }
 
 function mobGoToGame() {
   if(window.innerWidth <= 700) {
-    setTimeout(() => mobTab('game'), 120);
+    setTimeout(() => mobTab('game'), 150);
   }
 }
 
