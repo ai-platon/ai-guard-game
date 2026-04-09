@@ -1,0 +1,403 @@
+/* ─────────────────────────────────────────────
+   GLOBAL RESET & CSS VARIABLES
+───────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+
+:root{
+  --c:#00d4ff;--c2:#00ff9d;--red:#ff2244;--amber:#ffb300;
+  --bg:#040d1a;--bg2:#071525;--bg3:#0a1d30;
+  --panel:#071828;--panel2:#091e34;
+  --txt:#dff0ff;--txt2:#a8cce8;--txt3:#6a9ec0;
+  --txt-bright:#f0f8ff;
+}
+
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Rajdhani',sans-serif;overflow-x:hidden;font-size:16px}
+
+
+/* ─────────────────────────────────────────────
+   ANIMATED BACKGROUND — radial glows + grid
+───────────────────────────────────────────── */
+body::before{content:'';position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 50%,rgba(0,212,255,.04) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 30%,rgba(0,255,157,.03) 0%,transparent 60%),
+    radial-gradient(ellipse 80% 60% at 50% 100%,rgba(0,80,140,.12) 0%,transparent 70%);
+  pointer-events:none;animation:bgPulse 8s ease-in-out infinite alternate}
+@keyframes bgPulse{0%{opacity:.7}100%{opacity:1}}
+
+body::after{content:'';position:fixed;inset:0;z-index:0;
+  background-image:
+    linear-gradient(rgba(0,212,255,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,212,255,.018) 1px,transparent 1px);
+  background-size:55px 55px;
+  animation:gridDrift 30s linear infinite;pointer-events:none}
+@keyframes gridDrift{0%{background-position:0 0}100%{background-position:55px 55px}}
+
+
+/* ─────────────────────────────────────────────
+   LAYOUT — sidebar + main split
+───────────────────────────────────────────── */
+.app{position:relative;z-index:1;display:flex;height:100vh;overflow:hidden}
+.sidebar{width:300px;min-width:300px;background:rgba(4,10,22,.96);border-right:1px solid rgba(0,212,255,.1);display:flex;flex-direction:column;overflow-y:auto;padding:0}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:16px 20px}
+
+
+/* ─────────────────────────────────────────────
+   SIDEBAR
+───────────────────────────────────────────── */
+.sb-header{padding:18px 20px 14px;border-bottom:1px solid rgba(0,212,255,.14);text-align:center}
+.sb-logo{font-family:'Orbitron',monospace;font-size:12px;color:var(--c);letter-spacing:3px;text-shadow:0 0 20px rgba(0,212,255,.5);animation:logoPulse 3s ease-in-out infinite}
+@keyframes logoPulse{0%,100%{text-shadow:0 0 14px rgba(0,212,255,.4)}50%{text-shadow:0 0 28px rgba(0,212,255,.75),0 0 50px rgba(0,212,255,.2)}}
+
+.sb-section{padding:16px 20px;border-bottom:1px solid rgba(0,212,255,.08);position:relative}
+.sb-section::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,255,.15),transparent);animation:sectionShimmer 4s ease-in-out infinite}
+@keyframes sectionShimmer{0%,100%{opacity:.4}50%{opacity:1}}
+
+.sb-label{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--c);letter-spacing:4px;margin-bottom:10px;display:block;text-shadow:0 0 10px rgba(0,212,255,.4);opacity:.9}
+
+
+/* ─────────────────────────────────────────────
+   GUARD CARDS (sidebar list)
+───────────────────────────────────────────── */
+.guard-card{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:10px;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);border:1px solid rgba(255,255,255,.06);margin-bottom:7px;position:relative;overflow:hidden;background:rgba(255,255,255,.02)}
+.guard-card::before{content:'';position:absolute;inset:0;border-radius:10px;background:linear-gradient(135deg,rgba(255,255,255,.04),transparent);opacity:0;transition:opacity .3s}
+.guard-card::after{content:'';position:absolute;left:-100%;top:0;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);transition:left .4s ease;pointer-events:none}
+.guard-card:hover::before{opacity:1}
+.guard-card:hover::after{left:150%}
+.guard-card:hover{border-color:rgba(255,255,255,.15);transform:translateX(3px)}
+.guard-card.active{border-color:var(--gc,var(--c))!important;background:rgba(0,212,255,.06);box-shadow:0 0 16px rgba(0,212,255,.08),inset 0 0 20px rgba(0,212,255,.03)}
+
+.guard-card .gc-emoji{font-size:24px;flex-shrink:0;filter:drop-shadow(0 0 8px var(--gc,var(--c)));transition:transform .2s}
+.guard-card:hover .gc-emoji{transform:scale(1.15) rotate(-5deg)}
+.guard-card.active .gc-emoji{animation:emojiWiggle 2s ease-in-out infinite}
+@keyframes emojiWiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+
+.guard-card .gc-info{flex:1}
+.guard-card .gc-name{font-family:'Orbitron',monospace;font-size:13px;color:var(--gc,var(--c));letter-spacing:1.5px;text-shadow:0 0 8px var(--gc,rgba(0,212,255,.5))}
+.guard-card .gc-desc{font-size:13px;color:var(--txt2);margin-top:3px;letter-spacing:.3px}
+.guard-card .gc-badge{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 7px;border-radius:10px;border:1px solid;opacity:.7;white-space:nowrap;margin-top:4px;display:inline-block}
+.guard-card .gc-active{width:7px;height:7px;border-radius:50%;background:var(--gc,var(--c));box-shadow:0 0 10px var(--gc,var(--c));flex-shrink:0;opacity:0;transition:opacity .2s;animation:activeDot 1.5s ease-in-out infinite}
+.guard-card.active .gc-active{opacity:1}
+@keyframes activeDot{0%,100%{box-shadow:0 0 6px var(--gc,var(--c))}50%{box-shadow:0 0 14px var(--gc,var(--c)),0 0 24px var(--gc,rgba(0,212,255,.3))}}
+
+.diff-stars{font-size:11px;margin-top:3px;letter-spacing:2px;opacity:.8}
+
+
+/* ─────────────────────────────────────────────
+   VULNERABILITY CHIP
+───────────────────────────────────────────── */
+.vuln-chip{padding:12px 14px;border-radius:8px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.08);border-left:3px solid;font-family:'Share Tech Mono',monospace;font-size:13px;line-height:1.85;letter-spacing:.4px;margin:6px 0 12px;color:var(--txt-bright);animation:vulnGlow 3s ease-in-out infinite}
+@keyframes vulnGlow{0%,100%{box-shadow:none}50%{box-shadow:0 0 12px rgba(0,0,0,.4),inset 0 0 20px rgba(255,255,255,.01)}}
+
+.hint-list{list-style:none;margin-top:2px}
+.hint-list li{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:500;color:var(--txt2);line-height:2.3;letter-spacing:.3px;display:flex;align-items:center;gap:8px;transition:color .2s;cursor:default;user-select:none}
+.hint-list li:hover{color:var(--txt-bright)}
+.hint-list li span.hi{font-size:16px}
+
+
+/* ─────────────────────────────────────────────
+   LEADERBOARD ROWS
+───────────────────────────────────────────── */
+.lb-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(0,212,255,.06);font-size:14px;transition:background .2s;border-radius:4px;animation:lbRowIn .3s ease both}
+@keyframes lbRowIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.lb-rank{font-family:'Orbitron',monospace;font-size:12px;color:var(--txt3);width:22px;text-align:center;flex-shrink:0}
+.lb-rank.gold{color:#ffd700;text-shadow:0 0 10px rgba(255,215,0,.6);font-size:14px}
+.lb-rank.silver{color:#c8d8e8;text-shadow:0 0 6px rgba(200,216,232,.4)}
+.lb-rank.bronze{color:#e0a060;text-shadow:0 0 6px rgba(224,160,96,.4)}
+.lb-name{flex:1;color:var(--txt2);font-size:14px}
+.lb-score{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--c);text-shadow:0 0 8px rgba(0,212,255,.3)}
+.lb-guard-badge{font-size:10px;opacity:.5;margin-left:4px}
+.lb-empty{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--txt3);text-align:center;padding:14px 0;letter-spacing:1.5px;line-height:2}
+
+
+/* ─────────────────────────────────────────────
+   API KEY INPUT
+───────────────────────────────────────────── */
+.api-input{width:100%;background:rgba(4,14,28,.85);border:1px solid rgba(0,212,255,.22);border-radius:8px;padding:10px 14px;color:var(--txt-bright);font-family:'Share Tech Mono',monospace;font-size:12px;outline:none;transition:all .25s;letter-spacing:.5px}
+.api-input:focus{border-color:rgba(0,212,255,.55);box-shadow:0 0 16px rgba(0,212,255,.1),inset 0 0 10px rgba(0,212,255,.04)}
+.api-input::placeholder{color:var(--txt3);opacity:.8}
+.api-link{display:block;text-align:center;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--txt3);letter-spacing:1.5px;margin-top:8px;text-decoration:none;transition:all .2s;padding:4px 0}
+.api-link:hover{color:var(--c);text-shadow:0 0 10px rgba(0,212,255,.4)}
+
+.sb-api-input-wrap{display:flex;border-radius:8px;overflow:hidden;border:1px solid rgba(0,212,255,.22);margin-bottom:6px;transition:border-color .2s}
+.sb-api-input-wrap:focus-within{border-color:rgba(0,212,255,.55);box-shadow:0 0 16px rgba(0,212,255,.1)}
+.sb-api-input-wrap .api-input{border:none;border-radius:0;margin:0;flex:1;font-size:12px}
+.sb-api-connect-btn{background:rgba(0,212,255,.1);border:none;border-left:1px solid rgba(0,212,255,.2);padding:0 14px;color:var(--c);cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:13px;transition:all .2s;white-space:nowrap}
+.sb-api-connect-btn:hover{background:rgba(0,212,255,.22);color:#fff}
+
+.sb-api-connected{background:rgba(0,255,157,.04);border:1px solid rgba(0,255,157,.25);border-radius:8px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sb-api-status{display:flex;align-items:center;gap:7px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--c2);letter-spacing:1px}
+.sb-api-status .dot{width:7px;height:7px;border-radius:50%;background:var(--c2);box-shadow:0 0 8px var(--c2);animation:blink1 1.5s ease-in-out infinite;flex-shrink:0}
+.sb-api-disconnect-btn{background:none;border:1px solid rgba(255,34,68,.25);border-radius:5px;color:var(--txt3);font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;padding:3px 8px;transition:all .2s;white-space:nowrap}
+.sb-api-disconnect-btn:hover{color:var(--red);border-color:rgba(255,34,68,.5);background:rgba(255,34,68,.07)}
+
+
+/* ─────────────────────────────────────────────
+   BUTTONS
+───────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border-radius:7px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;cursor:pointer;transition:all .2s cubic-bezier(.4,0,.2,1);border:1px solid;outline:none;position:relative;overflow:hidden}
+.btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.08),transparent);opacity:0;transition:opacity .2s}
+.btn:hover::after{opacity:1}
+.btn-primary{background:rgba(0,212,255,.08);border-color:rgba(0,212,255,.35);color:var(--c)}
+.btn-primary:hover{background:rgba(0,212,255,.16);box-shadow:0 0 20px rgba(0,212,255,.18),inset 0 0 10px rgba(0,212,255,.05);transform:translateY(-1px)}
+.btn-primary:active{transform:translateY(0) scale(.98)}
+.btn-danger{background:rgba(255,34,68,.07);border-color:rgba(255,34,68,.3);color:var(--red)}
+.btn-danger:hover{background:rgba(255,34,68,.14);box-shadow:0 0 14px rgba(255,34,68,.15)}
+.btn-full{width:100%}
+.btn-sm{padding:7px 12px;font-size:10px}
+
+
+/* ─────────────────────────────────────────────
+   MAIN AREA — header
+───────────────────────────────────────────── */
+.game-header{text-align:center;padding:8px 0 12px;border-bottom:1px solid rgba(0,212,255,.1);margin-bottom:14px}
+.game-title{font-family:'Orbitron',monospace;font-size:clamp(18px,2.2vw,28px);font-weight:900;color:var(--c);text-shadow:0 0 30px rgba(0,212,255,.5),0 0 60px rgba(0,212,255,.15);letter-spacing:4px}
+.game-subtitle{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--txt3);letter-spacing:3px;margin-top:4px;animation:subtitleFade 5s ease-in-out infinite}
+@keyframes subtitleFade{0%,100%{opacity:.5}50%{opacity:1}}
+
+
+/* ─────────────────────────────────────────────
+   ARENA — guard display stage
+───────────────────────────────────────────── */
+.guard-arena{position:relative;height:160px;border-radius:12px;overflow:hidden;border:1px solid rgba(0,212,255,.15);margin-bottom:14px;background:linear-gradient(180deg,#02070e 0%,#050d1c 40%,#07121e 100%);box-shadow:0 0 40px rgba(0,212,255,.04),inset 0 0 60px rgba(0,0,0,.4)}
+
+/* Twinkling stars */
+.arena-stars{position:absolute;inset:0;overflow:hidden}
+.star{position:absolute;border-radius:50%;background:white;animation:twinkle var(--d,3s) ease-in-out infinite var(--delay,0s)}
+@keyframes twinkle{0%,100%{opacity:var(--o,.3)}50%{opacity:.9}}
+
+/* Floating hex/binary data fragments */
+.data-frag{position:absolute;font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(0,212,255,.25);animation:dataFloat linear infinite;pointer-events:none;white-space:nowrap}
+@keyframes dataFloat{0%{transform:translateY(0) translateX(0);opacity:.25}50%{opacity:.5}100%{transform:translateY(-120px) translateX(20px);opacity:0}}
+
+/* Pulse rings around guard feet */
+.arena-pulse-ring{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);width:60px;height:60px;border-radius:50%;border:1px solid var(--gc,var(--c));opacity:0;animation:pulseRing 3s ease-out infinite}
+.arena-pulse-ring:nth-child(2){animation-delay:1s}
+.arena-pulse-ring:nth-child(3){animation-delay:2s}
+@keyframes pulseRing{0%{transform:translateX(-50%) scale(.4);opacity:.6}100%{transform:translateX(-50%) scale(2.5);opacity:0}}
+
+/* Horizontal scanlines sweeping down */
+.arena-scanline{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,212,255,.7),transparent);filter:blur(.5px);animation:scanMove 2.2s linear infinite;z-index:5}
+.arena-scanline2{position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,255,157,.3),transparent);animation:scanMove 3.8s linear infinite 1.5s;z-index:5;opacity:.6}
+@keyframes scanMove{0%{top:0;opacity:1}100%{top:100%;opacity:0}}
+
+/* Corner bracket decorations */
+.arena-corner{position:absolute;width:22px;height:22px;border-color:rgba(0,212,255,.5);border-style:solid;transition:border-color .3s}
+.arena-corner.tl{top:8px;left:8px;border-width:2px 0 0 2px;animation:cornerPulse 4s ease-in-out infinite}
+.arena-corner.tr{top:8px;right:8px;border-width:2px 2px 0 0;animation:cornerPulse 4s ease-in-out infinite .5s}
+.arena-corner.bl{bottom:8px;left:8px;border-width:0 0 2px 2px;animation:cornerPulse 4s ease-in-out infinite 1s}
+.arena-corner.br{bottom:8px;right:8px;border-width:0 2px 2px 0;animation:cornerPulse 4s ease-in-out infinite 1.5s}
+@keyframes cornerPulse{0%,100%{opacity:.4;width:22px;height:22px}50%{opacity:1;width:28px;height:28px}}
+
+.arena-floor{position:absolute;bottom:0;left:0;right:0;height:50px;background:repeating-linear-gradient(90deg,rgba(0,212,255,.035) 0,rgba(0,212,255,.035) 1px,transparent 1px,transparent 50px);mask-image:linear-gradient(to top,rgba(0,0,0,.7),transparent)}
+.arena-floor-glow{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:70%;height:2px;background:linear-gradient(90deg,transparent,rgba(0,212,255,.5),transparent);box-shadow:0 0 25px rgba(0,212,255,.35);animation:floorGlow 3s ease-in-out infinite}
+@keyframes floorGlow{0%,100%{opacity:.6;width:60%}50%{opacity:1;width:80%}}
+.arena-floor-reflect{position:absolute;bottom:0;left:15%;right:15%;height:40px;background:linear-gradient(to top,rgba(0,212,255,.06),transparent)}
+
+/* Vertical light columns */
+.arena-lights{position:absolute;top:0;left:0;right:0;height:100%;pointer-events:none}
+.a-light{position:absolute;top:0;width:1px;height:100%;background:linear-gradient(to bottom,var(--lc),transparent 65%);opacity:.6;animation:lightFlicker 4s ease-in-out infinite var(--fd,0s)}
+@keyframes lightFlicker{0%,95%,100%{opacity:.6}96%{opacity:.15}97%{opacity:.6}98%{opacity:.2}99%{opacity:.6}}
+.a-light.l1{left:28px;--lc:rgba(0,212,255,.6);--fd:0s}
+.a-light.l2{left:52px;--lc:rgba(0,212,255,.25);--fd:1.2s}
+.a-light.r1{right:28px;--lc:rgba(0,212,255,.6);--fd:.6s}
+.a-light.r2{right:52px;--lc:rgba(0,212,255,.25);--fd:1.8s}
+
+/* Alert indicator lights */
+.arena-alert{position:absolute;top:14px;width:12px;height:12px;border-radius:50%;box-shadow:0 0 16px var(--gc,var(--c)),0 0 32px rgba(0,0,0,.3);background:var(--gc,var(--c));animation:alertBlink 2s ease-in-out infinite}
+.arena-alert.l{left:16px}
+.arena-alert.r{right:16px}
+@keyframes alertBlink{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+
+.arena-label{position:absolute;top:10px;right:46px;font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(0,212,255,.45);letter-spacing:2px}
+.arena-status-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#00ff9d;box-shadow:0 0 8px #00ff9d;margin-right:5px;animation:blink1 1.5s ease-in-out infinite;vertical-align:middle}
+@keyframes blink1{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}
+
+/* Guard SVG container and nameplate */
+.guard-stage{position:absolute;bottom:12px;left:50%;transform:translateX(-50%)}
+.guard-nameplate{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-family:'Orbitron',monospace;font-size:9px;font-weight:700;color:var(--gc,var(--c));text-shadow:0 0 12px var(--gc,var(--c)),0 0 24px rgba(0,212,255,.2);letter-spacing:4px;white-space:nowrap;animation:nameplateGlow 3s ease-in-out infinite}
+@keyframes nameplateGlow{0%,100%{opacity:.7}50%{opacity:1}}
+
+
+/* ─────────────────────────────────────────────
+   INFO BAR — moves / status chips
+───────────────────────────────────────────── */
+.info-bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.info-chip{font-family:'Share Tech Mono',monospace;font-size:13px;padding:7px 14px;border-radius:6px;letter-spacing:1px;white-space:nowrap}
+.chip-moves{background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.3);color:var(--c);text-shadow:0 0 8px rgba(0,212,255,.3)}
+.chip-status{background:rgba(255,179,0,.08);border:1px solid rgba(255,179,0,.3);color:var(--amber);text-shadow:0 0 8px rgba(255,179,0,.3)}
+.chip-hint{background:rgba(0,15,30,.6);border:1px solid rgba(0,212,255,.12);color:var(--txt2);font-size:12px;flex:1;min-width:0}
+
+/* Moves remaining progress bar */
+.moves-bar{height:4px;background:rgba(0,212,255,.08);border-radius:2px;margin-bottom:12px;overflow:hidden;position:relative}
+.moves-fill{height:100%;background:linear-gradient(90deg,var(--c),var(--c2));border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1);box-shadow:0 0 10px rgba(0,212,255,.5),0 0 20px rgba(0,212,255,.2)}
+
+
+/* ─────────────────────────────────────────────
+   CHAT AREA
+───────────────────────────────────────────── */
+.chat-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+.chat-scroll{flex:1;overflow-y:auto;padding-right:4px;margin-bottom:10px;scroll-behavior:smooth}
+.chat-scroll::-webkit-scrollbar{width:3px}
+.chat-scroll::-webkit-scrollbar-thumb{background:rgba(0,212,255,.2);border-radius:2px}
+.chat-scroll::-webkit-scrollbar-track{background:transparent}
+
+.msg{display:flex;gap:12px;margin-bottom:14px;animation:msgIn .35s cubic-bezier(.4,0,.2,1)}
+@keyframes msgIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{flex-direction:row-reverse}
+.m-av{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;position:relative}
+.m-av.guard-av{background:rgba(255,34,68,.08);border:1px solid rgba(255,34,68,.2)}
+.m-av.user-av{background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.18)}
+.m-av-pulse{position:absolute;inset:-3px;border-radius:10px;border:1px solid;animation:avPulse 2s ease-in-out infinite;opacity:0}
+@keyframes avPulse{0%{opacity:.5;transform:scale(1)}100%{opacity:0;transform:scale(1.35)}}
+.m-content{max-width:82%}
+.m-name{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;margin-bottom:5px;opacity:.8;font-weight:500}
+.m-bub{padding:12px 16px;border-radius:8px;font-size:15px;line-height:1.75}
+.bub-guard{background:rgba(4,1,6,.92);border:1px solid rgba(255,34,68,.15);border-left:3px solid var(--gc,var(--red));color:#e8d0d8;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:500}
+.bub-user{background:rgba(0,8,20,.92);border:1px solid rgba(0,212,255,.15);border-right:3px solid var(--c);color:#b8d8f0;text-align:right;font-size:15px;font-weight:500}
+
+/* Typing indicator (three dots) */
+.typing-dots{display:flex;gap:4px;padding:12px 14px}
+.typing-dots span{width:7px;height:7px;border-radius:50%;background:var(--gc,var(--c));animation:typingDot .8s ease-in-out infinite}
+.typing-dots span:nth-child(2){animation-delay:.15s}
+.typing-dots span:nth-child(3){animation-delay:.3s}
+@keyframes typingDot{0%,80%,100%{transform:scale(.7);opacity:.4}40%{transform:scale(1);opacity:1}}
+.typing-wrap{background:rgba(5,2,8,.9);border:1px solid rgba(255,34,68,.12);border-left:3px solid var(--gc,var(--red));border-radius:7px;display:inline-block}
+
+
+/* ─────────────────────────────────────────────
+   CHAT INPUT
+───────────────────────────────────────────── */
+.chat-input-area{display:flex;gap:0;border:1px solid rgba(0,212,255,.2);border-radius:8px;overflow:hidden;background:rgba(2,8,18,.95);transition:border-color .2s;flex-shrink:0}
+.chat-input-area:focus-within{border-color:rgba(0,212,255,.5);box-shadow:0 0 16px rgba(0,212,255,.08)}
+.chat-input{flex:1;background:transparent;border:none;padding:12px 16px;color:var(--txt);font-family:'Rajdhani',sans-serif;font-size:15px;outline:none}
+.chat-input::placeholder{color:var(--txt3)}
+.send-btn{background:rgba(0,212,255,.08);border:none;border-left:1px solid rgba(0,212,255,.15);padding:12px 20px;color:var(--c);cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:2px;transition:all .2s;white-space:nowrap}
+.send-btn:hover{background:rgba(0,212,255,.18);color:#fff}
+.send-btn:active{transform:scale(.97)}
+.send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+
+/* ─────────────────────────────────────────────
+   RESULT BOX — win / lose banner
+───────────────────────────────────────────── */
+.result-box{padding:18px;border-radius:8px;text-align:center;font-family:'Orbitron',monospace;font-size:14px;letter-spacing:3px;margin:10px 0;animation:resultIn .5s cubic-bezier(.4,0,.2,1)}
+@keyframes resultIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.res-win{background:rgba(0,255,157,.05);border:2px solid rgba(0,255,157,.35);color:var(--c2);text-shadow:0 0 20px rgba(0,255,157,.5);animation:resultIn .5s cubic-bezier(.4,0,.2,1),winPulse 2s ease-in-out 0.5s infinite}
+@keyframes winPulse{0%,100%{box-shadow:0 0 20px rgba(0,255,157,.2)}50%{box-shadow:0 0 40px rgba(0,255,157,.4)}}
+.res-lose{background:rgba(255,34,68,.05);border:2px solid rgba(255,34,68,.35);color:var(--red);text-shadow:0 0 20px rgba(255,34,68,.5)}
+
+/* "No API key" placeholder */
+.no-key{padding:32px 24px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--c);letter-spacing:2px;border:1px solid rgba(0,212,255,.3);border-radius:8px;margin:14px 0;line-height:2.4;text-shadow:0 0 12px rgba(0,212,255,.4);background:rgba(0,212,255,.04);box-shadow:0 0 20px rgba(0,212,255,.05),inset 0 0 30px rgba(0,212,255,.02)}
+
+
+/* ─────────────────────────────────────────────
+   NAME MODAL
+───────────────────────────────────────────── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-box{background:var(--bg2);border:1px solid rgba(0,212,255,.25);border-radius:12px;padding:28px;width:360px;max-width:90vw}
+.modal-title{font-family:'Orbitron',monospace;font-size:14px;color:var(--c);letter-spacing:3px;text-align:center;margin-bottom:20px}
+.modal-input{width:100%;background:rgba(4,14,28,.9);border:1px solid rgba(0,212,255,.25);border-radius:6px;padding:10px 14px;color:var(--txt);font-family:'Rajdhani',sans-serif;font-size:15px;outline:none;margin-bottom:10px;transition:border-color .2s}
+.modal-input:focus{border-color:var(--c);box-shadow:0 0 12px rgba(0,212,255,.1)}
+.random-names{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.name-pill{padding:4px 10px;border-radius:20px;font-size:11px;border:1px solid rgba(0,212,255,.2);color:var(--txt2);cursor:pointer;transition:all .2s;font-family:'Share Tech Mono',monospace}
+.name-pill:hover{border-color:var(--c);color:var(--c);background:rgba(0,212,255,.06)}
+
+
+/* ─────────────────────────────────────────────
+   SCORE FORM (post-win stats)
+───────────────────────────────────────────── */
+.score-form{background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.15);border-radius:8px;padding:14px;margin-top:10px}
+.score-form-title{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--c);letter-spacing:2px;margin-bottom:10px}
+
+
+/* ─────────────────────────────────────────────
+   PARTICLE WIN EFFECT
+───────────────────────────────────────────── */
+.particle-container{position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden}
+.particle{position:absolute;border-radius:50%;background:var(--c);animation:particleFly linear forwards;opacity:0}
+@keyframes particleFly{0%{opacity:.8;transform:scale(1)}100%{opacity:0;transform:scale(0) translateY(-200px)}}
+
+
+/* ─────────────────────────────────────────────
+   GLOBAL SCROLLBAR
+───────────────────────────────────────────── */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(0,212,255,.15);border-radius:2px}
+
+
+/* ─────────────────────────────────────────────
+   SIDEBAR FOOTER
+───────────────────────────────────────────── */
+.sb-footer{padding:14px 20px;border-top:1px solid rgba(0,212,255,.1);text-align:center;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--txt3);letter-spacing:1px;margin-top:auto}
+.sb-footer-link{color:var(--c);text-decoration:none;transition:all .2s;text-shadow:0 0 8px rgba(0,212,255,.3)}
+.sb-footer-link:hover{color:#fff;text-shadow:0 0 14px rgba(0,212,255,.7)}
+
+.gc-sensitive{transition:color .3s,border-color .3s,background .3s,box-shadow .3s}
+
+
+/* ─────────────────────────────────────────────
+   END LEADERBOARD MODAL
+───────────────────────────────────────────── */
+.end-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);animation:fadeInOverlay .4s ease}
+@keyframes fadeInOverlay{from{opacity:0}to{opacity:1}}
+.end-modal-box{background:linear-gradient(135deg,#040d1a,#071828);border:1px solid rgba(0,212,255,.3);border-radius:16px;padding:32px 28px;width:460px;max-width:92vw;max-height:85vh;overflow-y:auto;box-shadow:0 0 60px rgba(0,212,255,.15),0 0 120px rgba(0,0,0,.5);animation:slideUp .4s cubic-bezier(.4,0,.2,1)}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.end-modal-title{font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:var(--c);letter-spacing:4px;text-align:center;margin-bottom:6px;text-shadow:0 0 30px rgba(0,212,255,.5)}
+.end-modal-subtitle{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--txt3);text-align:center;letter-spacing:3px;margin-bottom:24px}
+.end-lb-entry{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:10px;margin-bottom:6px;background:rgba(0,212,255,.03);border:1px solid rgba(0,212,255,.07);transition:all .2s;animation:lbRowIn .3s ease both}
+.end-lb-entry.is-you{background:rgba(0,212,255,.08);border-color:rgba(0,212,255,.3);box-shadow:0 0 20px rgba(0,212,255,.08)}
+.end-lb-entry:hover{background:rgba(0,212,255,.06);border-color:rgba(0,212,255,.15)}
+.end-lb-rank{font-family:'Orbitron',monospace;font-size:14px;width:28px;text-align:center;flex-shrink:0}
+.end-lb-info{flex:1}
+.end-lb-name{font-family:'Orbitron',monospace;font-size:13px;color:var(--txt-bright);letter-spacing:1px}
+.end-lb-meta{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--txt3);margin-top:3px;letter-spacing:.5px}
+.end-lb-score{font-family:'Orbitron',monospace;font-size:16px;color:var(--c);text-shadow:0 0 12px rgba(0,212,255,.4);font-weight:700}
+.end-modal-close{width:100%;margin-top:20px;padding:13px;font-size:13px;letter-spacing:3px}
+.end-modal-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,255,.25),transparent);margin:16px 0}
+
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE — mobile layout
+───────────────────────────────────────────── */
+.mob-tabbar{display:none}
+.sb-label-mob{display:none}
+.sb-label-desk{display:inline}
+
+@media(max-width:700px){
+  .sb-label-mob{display:inline}
+  .sb-label-desk{display:none}
+}
+
+@media(max-width:700px){
+  body{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
+  .app{flex-direction:column;flex:1;overflow:hidden;min-height:0}
+  .main{order:1;flex:1;padding:6px 10px;overflow:hidden;display:flex;flex-direction:column;min-height:0;transition:flex .3s ease}
+  .main.mob-hidden{flex:0;overflow:hidden;min-height:0;padding:0}
+  .sidebar{order:2;width:100%;min-width:unset;max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1);border-right:none;border-top:1px solid rgba(0,212,255,.15)}
+  .sidebar.mob-open{max-height:100vh;overflow-y:auto}
+  .sb-header{display:none}
+  .guard-arena{height:120px;margin-bottom:6px}
+  .guard-stage svg{width:56px;height:90px}
+  .guard-stage{bottom:6px}
+  .guard-nameplate{font-size:7px;bottom:2px}
+  .arena-pulse-ring{width:40px;height:40px;bottom:10px}
+  .game-header{padding:2px 0 6px}
+  .game-title{font-size:13px;letter-spacing:1.5px}
+  .game-subtitle{display:none}
+  .info-bar{gap:4px;margin-bottom:6px}
+  .info-chip{font-size:10px;padding:4px 8px}
+  .chip-hint{display:none}
+  .moves-bar{margin-bottom:6px}
+
+  /* Mobile tab bar */
+  .mob-tabbar{display:flex;background:rgba(3,8,18,.98);border-top:1px solid rgba(0,212,255,.18);flex-shrink:0;width:100%}
+  .mob-tab{flex:1;padding:8px 2px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1.5px;color:var(--txt3);cursor:pointer;border:none;background:none;outline:none;transition:all .25s;position:relative;overflow:hidden}
+  .mob-tab::after{content:'';position:absolute;inset:0;background:rgba(0,212,255,.06);opacity:0;transition:opacity .2s}
+  .mob-tab:active::after{opacity:1}
+  .mob-tab .ti{font-size:20px;line-height:1.2;transition:transform .2s}
+  .mob-tab.active{color:var(--c)}
+  .mob-tab.active .ti{filter:drop-shadow(0 0 8px var(--c));transform:scale(1.15)}
+  .mob-tab.active::before{content:'';position:absolute;top:0;left:20%;right:20%;height:2px;background:var(--c);box-shadow:0 0 8px var(--c);border-radius:0 0 2px 2px}
+}

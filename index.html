@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Guard: Battle for Entry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="particle-container" id="particles"></div>
+
+<!-- Agent name modal shown on first load -->
+<div class="modal-overlay" id="nameModal">
+  <div class="modal-box">
+    <div class="modal-title">🎖 AGENT CALLSIGN</div>
+    <input class="modal-input" id="nameInput" placeholder="Enter name or pick one..." maxlength="20">
+    <div class="random-names" id="randomNames"></div>
+    <button class="btn btn-primary btn-full" onclick="confirmName()">▶ START OPERATION</button>
+  </div>
+</div>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-header">
+      <div class="sb-logo">⚙ CONTROL PANEL</div>
+    </div>
+
+    <!-- Guard selection -->
+    <div class="sb-section">
+      <span class="sb-label">CHOOSE GUARD</span>
+      <div id="guardCards"></div>
+    </div>
+
+    <!-- Vulnerability hint for current guard -->
+    <div class="sb-section" id="vulnSection">
+      <span class="sb-label">VULNERABILITY</span>
+      <div class="vuln-chip" id="vulnChip"></div>
+      <ul class="hint-list">
+        <li><span class="hi">🎯</span> 10 moves to get inside</li>
+        <li><span class="hi">💡</span> Study the guard's vulnerability</li>
+        <li><span class="hi">🔑</span> Each guard has a secret code</li>
+        <li><span class="hi">⚡</span> Fewer moves = more points</li>
+      </ul>
+    </div>
+
+    <!-- Groq API key input -->
+    <div class="sb-section" id="apiKeySbSection">
+      <span class="sb-label">API KEY</span>
+      <div id="apiKeyBar" class="sb-api-disconnected">
+        <div class="sb-api-input-wrap">
+          <input class="api-input" id="apiKeyInput" type="password" placeholder="gsk_..." autocomplete="off" onkeydown="if(event.key==='Enter')submitApiKey()">
+          <button class="sb-api-connect-btn" onclick="submitApiKey()">▶</button>
+        </div>
+        <a href="https://console.groq.com/keys" target="_blank" class="api-link">→ Get a free Groq API key</a>
+      </div>
+    </div>
+
+    <!-- Game controls -->
+    <div class="sb-section">
+      <button class="btn btn-primary btn-full" onclick="newGame()" style="margin-bottom:8px">↺ NEW GAME</button>
+      <button class="btn btn-sm btn-full" onclick="showNameModal()" style="background:rgba(0,212,255,.04);border-color:rgba(0,212,255,.15);color:var(--txt2)">✎ CHANGE NAME</button>
+    </div>
+
+    <!-- Local leaderboard -->
+    <div class="sb-section" style="flex:1">
+      <span class="sb-label">🏆 LEADERBOARD</span>
+      <div id="leaderboard"></div>
+    </div>
+
+    <div class="sb-footer">
+      Made by <a href="https://github.com/ai-platon" target="_blank" class="sb-footer-link">Platon</a>
+    </div>
+  </div>
+
+  <!-- MAIN GAME AREA -->
+  <div class="main">
+    <div class="game-header">
+      <div class="game-title">⚡ AI GUARD: BATTLE FOR ENTRY ⚡</div>
+      <div class="game-subtitle">SECTOR OMEGA // PROJECT ARGUS // CLASSIFICATION: TOP SECRET</div>
+    </div>
+
+    <!-- Animated guard display arena -->
+    <div class="guard-arena" id="guardArena">
+      <div class="arena-stars" id="arenaStars"></div>
+      <div class="data-frags" id="dataFrags"></div>
+      <div class="arena-scanline"></div>
+      <div class="arena-scanline2"></div>
+      <div class="arena-corner tl"></div>
+      <div class="arena-corner tr"></div>
+      <div class="arena-corner bl"></div>
+      <div class="arena-corner br"></div>
+      <div class="arena-lights">
+        <div class="a-light l1"></div><div class="a-light l2"></div>
+        <div class="a-light r1"></div><div class="a-light r2"></div>
+      </div>
+      <div class="arena-alert l" id="alertL"></div>
+      <div class="arena-alert r" id="alertR"></div>
+      <div class="arena-floor"></div>
+      <div class="arena-floor-glow"></div>
+      <div class="arena-floor-reflect"></div>
+      <div class="arena-pulse-ring" id="pulseRing1"></div>
+      <div class="arena-pulse-ring" id="pulseRing2"></div>
+      <div class="arena-pulse-ring" id="pulseRing3"></div>
+      <div class="arena-label"><span class="arena-status-dot"></span>GUARD ACTIVE</div>
+      <div class="guard-stage" id="guardStage"></div>
+      <div class="guard-nameplate" id="guardNameplate"></div>
+    </div>
+
+    <!-- Moves progress bar and status chips -->
+    <div class="moves-bar"><div class="moves-fill" id="movesFill" style="width:100%"></div></div>
+    <div class="info-bar">
+      <div class="info-chip chip-moves" id="movesChip">⏱ MOVES: 10/10</div>
+      <div class="info-chip chip-status" id="statusChip">◈ ACTIVE</div>
+      <div class="info-chip chip-hint" id="agentChip">🕵 AGENT: —</div>
+    </div>
+
+    <!-- Chat window -->
+    <div class="chat-wrap">
+      <div class="chat-scroll" id="chatScroll"></div>
+
+      <!-- Shown when no API key is set -->
+      <div id="noKeyMsg" class="no-key" style="display:none">
+        ◈ ENTER YOUR GROQ API KEY IN THE <span class="sb-label-desk">SIDEBAR</span><span class="sb-label-mob">GUARDS</span><br>
+        <a href="https://console.groq.com/keys" target="_blank" style="font-size:13px;color:var(--c);text-decoration:none;letter-spacing:1px;border-bottom:1px solid rgba(0,212,255,.3);padding-bottom:2px">→ console.groq.com/keys — free</a>
+      </div>
+
+      <!-- Win / lose result box injected here by JS -->
+      <div id="resultBox" style="display:none"></div>
+
+      <!-- Chat input -->
+      <div id="inputArea">
+        <div class="chat-input-area">
+          <input class="chat-input" id="chatInput" placeholder="Send a message to the guard..." maxlength="300" onkeydown="handleKey(event)">
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()">▶ SEND</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile bottom tab bar (hidden on desktop) -->
+<div class="mob-tabbar" id="mobTabbar">
+  <button class="mob-tab active" id="tabGame" onclick="mobTab('game')">
+    <span class="ti">⚔️</span>GAME
+  </button>
+  <button class="mob-tab" id="tabGuard" onclick="mobTab('guard')">
+    <span class="ti">🛡️</span>GUARDS
+  </button>
+  <button class="mob-tab" id="tabScore" onclick="mobTab('score')">
+    <span class="ti">🏆</span>SCORE
+  </button>
+</div>
+
+<script src="guards.js"></script>
+<script src="ui.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
