@@ -8,7 +8,7 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-ai--platon.github.io-00d4ff?logo=github&logoColor=white)](https://ai-platon.github.io/ai-guard-game/)
 
-> 🎮 **[Play it live → ai-platon.github.io/ai-guard-game](https://ai-platon.github.io/ai-guard-game/)** — no installation needed
+> 🎮 **[Play it live → ai-platon.github.io/ai-guard-game](https://ai-platon.github.io/ai-guard-game/index.html)** — no installation needed
 
 ---
 
